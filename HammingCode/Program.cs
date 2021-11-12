@@ -33,7 +33,7 @@ namespace HammingCode
                 {
                     block[item] = SetParity(size - 1, item);
                 }
-                
+                block[0] = SetControlParityBit();
                 //Output Block
                 Console.WriteLine(GetBlock());
             }
@@ -116,6 +116,15 @@ namespace HammingCode
             return parityValue;
         }
 
+        //Sets Control Parity Bit
+        private int SetControlParityBit()
+        {
+            if ((block.Sum() % 2) == 0)
+                return 0;
+            else
+                return 1;
+        }
+
         //Retruns block as string
         private string GetBlock()
         {
@@ -133,13 +142,13 @@ namespace HammingCode
          */
 
         //Checks if number is Power of 2
-        private bool IsPowerOfTwo(ulong x)
+        public bool IsPowerOfTwo(ulong x)
         {
             return (x != 0) && ((x & (x - 1)) == 0);
         }
 
         //Gets The XOR of a List
-        private int XorOfList(List<int> list, int n)
+        public int XorOfList(List<int> list, int n)
         {
             int xor_list = 0;
 
@@ -158,7 +167,108 @@ namespace HammingCode
     //Decode HammingCode
     class DecodeHammingCode
     {
+        List<int> data = new List<int>();
+        int error;
 
+        public DecodeHammingCode(int[] messagedata)
+        {
+            if(IsPowerOfTwo((ulong)messagedata.Length) == false)
+                Console.Error.WriteLine("Error: Data To long or short");
+            else
+            {
+                //Convert to List
+                this.data = messagedata.ToList();
+
+                //Write the Error
+                error = checkBits();
+                if (error == 0)
+                    Console.WriteLine("No Error Detected");
+                else
+                {
+                    string correctedBlock = CorrectedBlock(error);
+                    if (checkForMultiError() == false)
+                    {
+                        Console.WriteLine("Multiple Errors detected");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error on bit: " + error);
+                        Console.WriteLine("Corrected Block: " + CorrectedBlock(error));
+                    }
+                }
+
+
+
+            }
+        }
+
+        //Check for Error
+        private int checkBits()
+        {
+            int posData = 0;
+            int returnBit = 0;
+            List<int> aktiveBits = new List<int>();
+
+            foreach(int bit in this.data)
+            {
+                if(bit == 1)
+                {
+                    string binary = Convert.ToString(bit, 2);
+                    aktiveBits.Add(posData);
+                }
+                posData++;
+            }
+            returnBit = XorOfList(aktiveBits, aktiveBits.Count);
+            return returnBit;
+        }
+
+        //Check for Multi errror
+        private bool checkForMultiError()
+        {
+            if ((this.data.Sum() % 2) == 0)
+                return true;
+            else
+                return false;
+        }
+
+        //CorrectString
+        private string CorrectedBlock(int error)
+        {
+            //flips bit
+            this.data[error] = 1 - data[error];
+
+            //returns list as string
+            string joinedString = null;
+
+            foreach (var item in this.data)
+            {
+                joinedString += item + " ";
+            }
+            return joinedString;
+
+        }
+
+        /*
+         *    MATH
+         */
+
+        //Gets The XOR of a List
+        private int XorOfList(List<int> list, int n)
+        {
+            int xor_list = 0;
+
+            for (int i = 0; i < n; i++)
+            {
+                xor_list = xor_list ^ list[i];
+            }
+
+            return xor_list;
+        }
+
+        private bool IsPowerOfTwo(ulong x)
+        {
+            return (x != 0) && ((x & (x - 1)) == 0);
+        }
     }
 
 
@@ -167,11 +277,12 @@ namespace HammingCode
 
         static void Main(string[] args)
         {
-            int[] sampleData = {0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0};
+            int[] sampleDataEncode = {0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0};
+            int[] sampleDataDecode = {1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1,0 };
             
 
-            EncodeHammingCode Hamming1 = new EncodeHammingCode(sampleData, 16);
-
+            EncodeHammingCode Hamming1 = new EncodeHammingCode(sampleDataEncode, 16);
+            DecodeHammingCode Hamming2 = new DecodeHammingCode(sampleDataDecode);
 
         }
 
