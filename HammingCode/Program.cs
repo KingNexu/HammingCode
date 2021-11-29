@@ -8,9 +8,9 @@ namespace HammingCode
 {
     class EncodeHammingCode
     {
-        List<int> data = new List<int>();
-        List<int> block;
-        List<int> parityBits = new List<int>();
+        private List<int> data = new List<int>();
+        private List<int> block;
+        private List<int> parityBits = new List<int>();
 
         //Constructor
         public EncodeHammingCode(int[] messageData, int size)
@@ -23,7 +23,6 @@ namespace HammingCode
             {
                 //Set Block
                 block = new List<int>(new int[size]);
-                Console.WriteLine("Success");
                 List<int> data = messageData.ToList();
                 this.data = data;
                 block = SetBlock(size - 1);
@@ -167,8 +166,8 @@ namespace HammingCode
     //Decode HammingCode
     class DecodeHammingCode
     {
-        List<int> data = new List<int>();
-        int error;
+        private List<int> data = new List<int>();
+        private int error;
 
         public DecodeHammingCode(int[] messagedata)
         {
@@ -278,8 +277,7 @@ namespace HammingCode
         static void Main(string[] args)
         {
             int[] sampleDataEncode = {0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0};
-            int[] sampleDataDecode = {1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1,0 };
-            
+            int[] sampleDataDecode = { 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0};         
 
             EncodeHammingCode Hamming1 = new EncodeHammingCode(sampleDataEncode, 16);
             DecodeHammingCode Hamming2 = new DecodeHammingCode(sampleDataDecode);
