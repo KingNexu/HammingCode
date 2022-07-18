@@ -41,37 +41,7 @@ namespace HammingCode
         }
 
         //Sorts out Parity bits and writes data to the other bits
-        private List<int> SetBlock(int size)
-        {
-            //tempoary list
-            int posData = 0, posBlock = 1;
-            List<int> block = new List<int>();
-            block.Add(0);
 
-            foreach (var item in this.block)
-            {
-                if (IsPowerOfTwo((ulong)posBlock) == true)
-                {
-                    //Write Position of Parity bit to List
-                    parityBits.Add(posBlock);
-                    block.Add(3);
-
-                    posBlock++;
-                }
-                else
-                {
-                    //Write Data to Block
-                    block.Add(this.data[posData]);
-
-                    posData++;
-                    posBlock++;
-                }
-            }
-                       
-            block.RemoveAt(block.Count - 1);
-            parityBits.RemoveAt(parityBits.Count - 1);
-            return block;
-        }
 
         private int SetParity(int size, int posParityBit)
         {
@@ -115,6 +85,38 @@ namespace HammingCode
             return parityValue;
         }
 
+                private List<int> SetBlock(int size)
+        {
+            //tempoary list
+            int posData = 0, posBlock = 1;
+            List<int> block = new List<int>();
+            block.Add(0);
+
+            foreach (var item in this.block)
+            {
+                if (IsPowerOfTwo((ulong)posBlock) == true)
+                {
+                    //Write Position of Parity bit to List
+                    parityBits.Add(posBlock);
+                    block.Add(3);
+
+                    posBlock++;
+                }
+                else
+                {
+                    //Write Data to Block
+                    block.Add(this.data[posData]);
+
+                    posData++;
+                    posBlock++;
+                }
+            }
+                       
+            block.RemoveAt(block.Count - 1);
+            parityBits.RemoveAt(parityBits.Count - 1);
+            return block;
+        }
+        
         //Sets Control Parity Bit
         private int SetControlParityBit()
         {
